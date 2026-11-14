@@ -1,7 +1,7 @@
 :root{
   --font-sans:"Inter",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
   --font-serif:"Source Serif 4","Iowan Old Style",Georgia,serif;
-  --color-bg:#FAF9F5;--color-panel:#FFFFFF;--color-fg:#1F1E1D;--color-fg-muted:#6B6A64;--color-border-line:rgba(31,30,29,.13);
+  --color-bg:#FFFFFF;--color-panel:#FFFFFF;--color-fg:#1F1E1D;--color-fg-muted:#6B6A64;--color-border-line:rgba(31,30,29,.13);
   --color-bad:#C2456E;--cds-surface-popover:#FFFFFF;--cds-border:rgba(31,30,29,.15);--cds-shadow-popover:0 6px 24px rgba(0,0,0,.10);
   --cds-chart-grid:rgba(31,30,29,.09);--cds-chart-axis:rgba(31,30,29,.22);
   --cds-gap-xs:4px;--cds-gap-sm:8px;--cds-gap-md:12px;--cds-gap-lg:20px;
