@@ -552,9 +552,16 @@
         if (k === 1 && GCOL[(v || '').toLowerCase()]) { td.style.color = GCOL[v.toLowerCase()]; td.style.fontWeight = 600; } tr.appendChild(td); }); body.appendChild(tr); });
   }
 
+  const communityFilter = document.getElementById('community-filter');
+  const threadFilter = document.getElementById('hide-big-threads');
+  const sectionLinks = document.getElementById('section-links');
+
   function redraw() {
-    document.querySelectorAll('[data-group]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.group === group)));
-    document.querySelectorAll('[id^=comms-]').forEach(el => { el.hidden = el.id !== 'comms-' + group; });
+    const showCommunity = tab !== 'compare' && tab !== 'tech';
+    communityFilter.value = group;
+    threadFilter.checked = hideBig;
+    document.getElementById('groups').hidden = !showCommunity;
+    document.querySelectorAll('[id^=comms-]').forEach(el => { el.hidden = !showCommunity || el.id !== 'comms-' + group; });
     Object.entries(GNAME).forEach(([k, g]) => { if (!g) return; const el = document.getElementById('comms-' + k);
       el.textContent = BASE.groupmap.filter(r => r.Group === g).map(r => r.Community).join(', '); });
     { const r = D('group_spread').data.find(d => d.grp === group), el = document.getElementById('thin-note');
@@ -562,8 +569,17 @@
       if (!el.hidden) el.textContent = `Read as a lead, not a finding: ${fmt(r.items)} items from ${fmt(r.threads)} thread${r.threads === 1 ? '' : 's'}. The biggest, ${r.top_thread}, gives ${fmt(r.top_n)} (${r.top_pct}%).`; }
     document.querySelectorAll('[data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
     ['explore', 'compare', 'check', 'tech'].forEach(t => { document.getElementById(t).hidden = tab !== t; });
-    document.getElementById('groups').hidden = tab === 'compare' || tab === 'tech';
-    document.querySelectorAll('[data-big]').forEach(b => b.setAttribute('aria-pressed', String((b.dataset.big === 'hide') === hideBig)));
+    if (sectionLinks.dataset.tab !== tab) {
+      sectionLinks.replaceChildren(...Array.from(document.querySelectorAll('#' + tab + ' > .px-card'), section => {
+        const item = document.createElement('li');
+        const link = document.createElement('a');
+        link.href = '#' + section.id;
+        link.textContent = section.querySelector('h2').textContent;
+        item.appendChild(link);
+        return item;
+      }));
+      sectionLinks.dataset.tab = tab;
+    }
     document.querySelectorAll('[data-by]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.by === chkBy)));
     { const bt = bigThreads(), el = document.getElementById('big-note');
       el.textContent = bt.length ? (hideBig ? 'Hidden: ' : 'Big threads (15+ items): ') + bt.map(([t, n]) => `${t} (${n})`).join(', ') + (hideBig ? '. Every count and chart now leaves them out.' : '') : ''; }
@@ -621,15 +637,18 @@
     e.addEventListener('click', () => setZoom(b.dataset.target)); b.parentNode.insertBefore(e, b);
     b.addEventListener('click', () => toPng(document.getElementById(b.dataset.target), b.dataset.name)); });
 
-  document.querySelectorAll('[data-big]').forEach(b => b.addEventListener('click', () => { hideBig = b.dataset.big === 'hide'; memo = null; selCode = selLoc = selHold = selCell = selectedSubtopic = null; redraw(); }));
+  threadFilter.addEventListener('change', () => { hideBig = threadFilter.checked; memo = null; selCode = selLoc = selHold = selCell = selectedSubtopic = null; redraw(); });
   document.querySelectorAll('[data-by]').forEach(b => b.addEventListener('click', () => { chkBy = b.dataset.by; selHold = null; redraw(); }));
-  document.querySelectorAll('[data-group]').forEach(b => b.addEventListener('click', () => { group = b.dataset.group; selCode = selLoc = selHold = selCell = selectedSubtopic = null; redraw(); }));
+  communityFilter.addEventListener('change', () => { group = communityFilter.value; selCode = selLoc = selHold = selCell = selectedSubtopic = null; redraw(); });
   document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => { if (zoomed) setZoom(null); tab = b.dataset.tab; history.replaceState(null, '', '#' + tab); redraw(); }));
   let qt; document.getElementById('items-search').addEventListener('input', e => { clearTimeout(qt); qt = setTimeout(() => { query = e.target.value; drawTable(D('items_g')); }, 150); });
   document.getElementById('items-csv').addEventListener('click', () => saveCsv(tableRows(D('items_g')), ['Item ID', 'Source ID', 'Group', 'Community', 'Thread', 'Row type', 'Topic', 'Subtopic', 'Paraphrase', 'Primary code', 'Secondary code(s)', 'Friction trigger', 'Why it works (paraphrased)', 'Tools named', 'Friction located in', 'Pattern', 'Tech type', 'Built it themselves'], 'phase0_items_' + group + (hideBig ? '_nobig' : '')));
-  if (['compare', 'check', 'tech'].includes(location.hash.slice(1))) tab = location.hash.slice(1);
+  const target = document.getElementById(location.hash.slice(1));
+  const targetTab = target?.closest('.px-stack');
+  if (targetTab) tab = targetTab.id;
   document.getElementById('snapshot').textContent = `Data snapshot ${RAW.snapshot} · ${fmt(RAW.items.length)} items from ${fmt(RAW.sources.length)} sources`;
   let rw, lastW = window.innerWidth; window.addEventListener('resize', () => { if (window.innerWidth === lastW) return; lastW = window.innerWidth; clearTimeout(rw); rw = setTimeout(redraw, 150); });
   redraw();
+  if (targetTab && target !== targetTab) target.scrollIntoView();
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(redraw);
 })();
