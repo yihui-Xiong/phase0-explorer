@@ -33,11 +33,21 @@ a{color:inherit}
 
 /* ---- Explorer (as in the original) ---- */
 .px-wrap{font-family:var(--font-sans);display:flex;flex-direction:column;gap:var(--cds-gap-lg)}
+.px-content{display:flex;flex-direction:column;gap:var(--cds-gap-lg);min-width:0}
 .px-head h1{font-family:var(--font-serif);font-weight:400;font-size:var(--cds-font-size-title);line-height:1.15;margin:0 0 var(--cds-gap-xs)}
 .px-head p{margin:0;color:var(--color-fg-muted);font-size:var(--cds-font-size-body)}
 .px-tabs{display:flex;gap:var(--cds-gap-xs);border-bottom:1px solid var(--color-border-line);flex-wrap:wrap;position:sticky;top:0;background:var(--color-bg);z-index:5}
 .px-tab{font:inherit;font-size:var(--cds-font-size-body);background:none;border:0;border-bottom:2px solid transparent;color:var(--color-fg-muted);padding:var(--cds-pad-sm) var(--cds-pad-md);cursor:pointer;margin-bottom:-1px}
 .px-tab[aria-selected=true]{color:var(--color-fg);border-bottom-color:var(--color-fg);font-weight:var(--cds-font-weight-medium)}
+@media (min-width:960px){
+  .site{max-width:1380px}
+  .px-wrap{display:grid;grid-template-columns:180px minmax(0,1fr);grid-template-areas:"nav heading" "nav content"}
+  .px-head{grid-area:heading}
+  .px-content{grid-area:content}
+  .px-tabs{grid-area:nav;align-self:start;top:var(--cds-gap-lg);flex-direction:column;flex-wrap:nowrap;border-bottom:0;border-right:1px solid var(--color-border-line);padding-right:var(--cds-pad-sm)}
+  .px-tab{border-bottom:0;border-left:2px solid transparent;text-align:left;margin:0}
+  .px-tab[aria-selected=true]{border-left-color:var(--color-fg);background:var(--cds-chart-grid)}
+}
 .px-groups{display:flex;flex-wrap:wrap;align-items:center;gap:var(--cds-gap-sm)}
 .px-seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--color-border-line);border-radius:var(--cds-radius);overflow:hidden}
 .px-seg button{font:inherit;font-size:var(--cds-font-size-caption);background:var(--color-panel);color:var(--color-fg);border:0;border-right:1px solid var(--color-border-line);padding:var(--cds-pad-xs) var(--cds-pad-md);cursor:pointer;display:inline-flex;align-items:center;gap:6px}
