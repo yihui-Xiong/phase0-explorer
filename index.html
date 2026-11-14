@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Phase 0 Findings Explorer · How neurodivergent adults work around everyday friction</title>
+<meta name="description" content="An interactive explorer of 466 paraphrased workarounds that neurodivergent adults shared on Reddit: what they talk about, which tools they use, and how ADHD, autistic, AuDHD, dyslexic, dyspraxic and dyscalculic communities differ.">
+<meta property="og:title" content="Phase 0 Findings Explorer">
+<meta property="og:description" content="What neurodivergent adults share about their everyday workarounds, coded and visualized.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%233E6A8A'/><rect x='6' y='6' width='12' height='12' rx='2' fill='%23C77D2E'/><rect x='20' y='6' width='6' height='12' rx='2' fill='%231F8A8A'/><rect x='6' y='20' width='20' height='6' rx='2' fill='%23C2456E'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+</head>
+<body>
+<div class="site">
+  <header class="site-bar">
+    <span class="brand">Neurodivergent DIY · Phase 0</span>
+    <nav><a href="#explorer">Explorer</a><a href="#data">Download data</a><a href="#about">About the data</a></nav>
+  </header>
+
+<main class="px-wrap" id="explorer">
+  <div class="px-head">
+    <h1 id="title">Phase 0: what people share about their workarounds</h1>
+    <p id="takeaway">—</p>
+  </div>
+
+  <div class="px-zbar" id="zbar" hidden><button type="button" class="px-btn" data-z="-" aria-label="Zoom out">−</button><span id="zlvl">100%</span><button type="button" class="px-btn" data-z="+" aria-label="Zoom in">+</button><button type="button" class="px-btn" data-z="x">Close</button></div>
+  <div class="px-tabs" role="tablist">
+    <button class="px-tab" role="tab" id="tab-explore" data-tab="explore" aria-selected="true">Explore</button>
+    <button class="px-tab" role="tab" id="tab-compare" data-tab="compare" aria-selected="false">Compare groups</button>
+    <button class="px-tab" role="tab" id="tab-check" data-tab="check" aria-selected="false">Check trends</button>
+    <button class="px-tab" role="tab" id="tab-tech" data-tab="tech" aria-selected="false">Tech &amp; DIY</button>
+  </div>
+  <div class="px-groups" id="groups">
+    <div class="px-seg" role="group" aria-label="Group">
+      <button type="button" data-group="all" aria-pressed="true">All</button>
+      <button type="button" data-group="adhd" aria-pressed="false"><i style="background:#C77D2E"></i>ADHD</button>
+      <button type="button" data-group="autism" aria-pressed="false"><i style="background:#1F8A8A"></i>Autism</button>
+      <button type="button" data-group="audhd" aria-pressed="false"><i style="background:#7A5BA8"></i>AuDHD</button>
+      <button type="button" data-group="dyslexia" aria-pressed="false"><i style="background:#C2456E"></i>Dyslexia</button>
+      <button type="button" data-group="dyspraxia" aria-pressed="false"><i style="background:#3F6FA0"></i>Dyspraxia</button>
+      <button type="button" data-group="dyscalculia" aria-pressed="false"><i style="background:#4E9A5B"></i>Dyscalculia</button>
+    </div>
+    <span class="px-comms" id="comms-all">Every community, including r/ExecutiveDysfunction, r/ProductivityGuide, r/neurodiversity, r/neurodivergent and r/AutismTranslated</span>
+    <span class="px-comms" id="comms-adhd" hidden></span><span class="px-comms" id="comms-autism" hidden></span><span class="px-comms" id="comms-audhd" hidden></span>
+    <span class="px-comms" id="comms-dyslexia" hidden></span><span class="px-comms" id="comms-dyspraxia" hidden></span><span class="px-comms" id="comms-dyscalculia" hidden></span>
+  </div>
+  <p class="px-thin" id="thin-note" hidden></p>
+  <div class="px-ctrl">
+    <div class="px-seg" role="group" aria-label="Big threads">
+      <button type="button" data-big="keep" aria-pressed="true">Include big threads</button>
+      <button type="button" data-big="hide" aria-pressed="false">Hide big threads</button>
+    </div>
+    <span class="px-lab" id="big-note"></span>
+  </div>
+
+  <section id="explore" class="px-stack">
+    <div class="px-kpis">
+      <div class="px-kpi"><div class="v" data-field="items">—</div><div class="l">Items logged</div></div>
+      <div class="px-kpi"><div class="v" data-field="strategies">—</div><div class="l">Strategies</div></div>
+      <div class="px-kpi"><div class="v" data-field="frictions">—</div><div class="l">Frictions</div></div>
+      <div class="px-kpi"><div class="v" data-field="sources">—</div><div class="l">Sources viewed</div></div>
+      <div class="px-kpi"><div class="v" data-field="tool_share">—</div><div class="l">Strategies that adapt a tool</div></div>
+    </div>
+    <div class="px-empty" id="group-empty" hidden>No items from this group yet.</div>
+
+    <section class="px-card" id="topics">
+      <div class="px-top">
+        <div><h2>What people talk about</h2><div class="note">Box size = number of items. Each topic holds its subtopics, labeled with their counts.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="topics-map" data-name="phase0_topics_map">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="topics-map"></div>
+      <div class="px-top" style="margin-top:var(--cds-gap-lg)">
+        <div class="note" style="margin:0">As a list: every subtopic with its count. Bars share one scale.</div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="topics-list" data-name="phase0_topics_list">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="topics-list" style="margin-top:var(--cds-gap-sm)"></div>
+    </section>
+
+    <section class="px-card" id="tools">
+      <div class="px-top">
+        <div><h2>What they use</h2><div class="note">Circle size = items naming the tool, colored by kind.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="tools-map" data-name="phase0_tools_map">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="tools-map"></div>
+      <div class="px-top" style="margin-top:var(--cds-gap-lg)">
+        <div class="note" style="margin:0">As a list: every tool with its count, grouped by kind.</div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="tools-list" data-name="phase0_tools_list">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="tools-list" style="margin-top:var(--cds-gap-sm)"></div>
+    </section>
+
+    <section class="px-card" id="codes">
+      <div class="px-top">
+        <div><h2>Kinds of strategies</h2><div class="note">Primary codes of strategy items. Tool adaptations in blue, non-tool strategies in gray. Click a bar to list its items.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="codes-chart" data-name="phase0_strategy_kinds">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="codes-chart" style="min-height:10rem"></div>
+      <div class="px-detail" id="codes-detail"></div>
+    </section>
+
+    <section class="px-card" id="attribution">
+      <div class="px-top">
+        <div><h2>Where people place the cause of friction</h2><div class="note">The poster's own framing of what causes the friction. Click a bar to list its items.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="attr-chart" data-name="phase0_friction_attribution">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="attr-chart" style="min-height:9rem"></div>
+      <div class="px-detail" id="attr-detail"></div>
+    </section>
+
+    <section class="px-card" id="items">
+      <div class="px-top">
+        <div><h2>All items</h2><div class="px-filter" id="items-filter"></div></div>
+        <div class="px-btns"><input class="px-search" id="items-search" type="search" placeholder="Search items…" aria-label="Search items"><button class="px-btn" id="items-csv">Download CSV</button></div>
+      </div>
+      <div class="px-tablebox">
+        <table class="px-table">
+          <thead><tr><th>Item</th><th>Group</th><th>Topic</th><th>Subtopic</th><th>Type</th><th>Paraphrase</th><th>Code</th></tr></thead>
+          <tbody id="items-body"></tbody>
+        </table>
+      </div>
+    </section>
+  </section>
+
+  <section id="compare" class="px-stack" hidden>
+    <section class="px-card" id="compare-sizes">
+      <div><h2>Group sizes</h2><div class="note">Groups differ a lot in size, so the charts below compare shares within each group. Treat gaps of a few points in the smaller groups as noise.</div></div>
+      <div class="px-tablebox" style="max-height:none">
+        <table class="px-table">
+          <thead><tr><th>Group</th><th class="num">Sources viewed</th><th class="num">Items</th><th class="num">Strategies</th><th class="num">Frictions</th><th class="num">Items per source</th><th class="num">Adapt a tool</th></tr></thead>
+          <tbody id="sizes-body"></tbody>
+        </table>
+      </div>
+    </section>
+    <section class="px-card" id="cmp-codes">
+      <div class="px-top">
+        <div><h2>Kinds of strategies, by group</h2><div class="note">Share of each group's strategies with this primary code. Hover a row for counts.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="cmp-codes-chart" data-name="phase0_compare_strategy_kinds">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="cmp-codes-chart" style="min-height:12rem"></div>
+      <div class="px-legend" id="cmp-legend-1"></div>
+    </section>
+    <section class="px-card" id="cmp-topics">
+      <div class="px-top">
+        <div><h2>What people talk about, by group</h2><div class="note">Share of each group's items in this topic.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="cmp-topics-chart" data-name="phase0_compare_topics">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="cmp-topics-chart" style="min-height:12rem"></div>
+      <div class="px-legend" id="cmp-legend-2"></div>
+    </section>
+    <section class="px-card" id="cmp-loc">
+      <div class="px-top">
+        <div><h2>Where people place the cause, by group</h2><div class="note">Share of each group's frictions.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="cmp-loc-chart" data-name="phase0_compare_cause">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="cmp-loc-chart" style="min-height:8rem"></div>
+      <div class="px-legend" id="cmp-legend-3"></div>
+    </section>
+  </section>
+
+  <section id="check" class="px-stack" hidden>
+    <section class="px-card" id="chk-hold">
+      <div class="px-top">
+        <div><h2>Does the trend hold?</h2><div class="note">Items vs. separate threads (a post plus its comments). A trend is <b>solid</b> when it comes from 3+ threads and no single thread gives half of it. Click a row to see its items.</div></div>
+        <div class="px-seg" role="group" aria-label="Rows"><button type="button" data-by="topic" aria-pressed="true">By topic</button><button type="button" data-by="code" aria-pressed="false">By strategy kind</button></div>
+      </div>
+      <div class="px-tablebox" style="max-height:32rem">
+        <table class="px-table"><thead><tr><th id="hold-key">Topic</th><th class="num">Items</th><th class="num">Threads</th><th>Biggest thread</th><th>Verdict</th></tr></thead><tbody id="hold-body"></tbody></table>
+      </div>
+      <div class="px-detail" id="hold-detail"></div>
+    </section>
+    <section class="px-card" id="chk-heat">
+      <div class="px-top">
+        <div><h2>Frictions and the strategies used for them</h2><div class="note">Rows are topics. Pink = frictions people describe; blue = strategies, by kind. A topic marked <b>gap</b> has as many frictions as strategies or more: a problem people haven't solved well. Click a cell to see its items.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="heat-chart" data-name="phase0_friction_strategy_map">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="heat-chart" style="min-height:12rem"></div>
+      <div class="px-detail" id="heat-detail"></div>
+    </section>
+    <section class="px-card" id="chk-sat">
+      <div class="px-top">
+        <div><h2>Are new posts still adding new themes?</h2><div class="note">Running total of distinct subtopics as sources are added in order (S1 → latest). When the line flattens, new posts mostly repeat what is already there. Bars: new subtopics per 50 sources.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="sat-chart" data-name="phase0_saturation">Download PNG</button></div>
+      </div>
+      <p class="px-hint" id="sat-text" style="margin:0 0 var(--cds-gap-sm)"></p>
+      <div class="px-chart" id="sat-chart" style="min-height:14rem"></div>
+    </section>
+  </section>
+
+  <section id="tech" class="px-stack" hidden>
+    <section class="px-card" id="tech-mix">
+      <div class="px-top">
+        <div><h2>Main tool in each strategy, by group</h2><div class="note">Share of each group's strategies by the kind of main tool. Software = apps, AI, phone features, online services and media; Device = electronics; Physical object = paper, whiteboards, earplugs and other things. Hover a bar for counts.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="mix-chart" data-name="phase0_tech_mix">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="mix-chart" style="min-height:10rem"></div>
+      <div class="px-legend" id="mix-legend"></div>
+    </section>
+    <section class="px-card" id="tech-depth">
+      <div class="px-top">
+        <div><h2>How far people change the tool</h2><div class="note">Each strategy once, by its primary code; built it themselves takes priority over the code. Grey = the strategy doesn't work through a tool (people, timing, setting, mindset).</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="depth-chart" data-name="phase0_adaptation_depth">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="depth-chart" style="min-height:10rem"></div>
+      <div class="px-legend" id="depth-legend"></div>
+    </section>
+    <section class="px-card" id="tech-patterns">
+      <div class="px-top">
+        <div><h2>Which patterns show up in which group</h2><div class="note">Share of each group's items that show the pattern, so big and small groups compare fairly. A cell counts when it has 2+ items from 2+ threads; faded cells don't count yet. Hover a cell for counts.</div></div>
+        <div class="px-btns"><button class="px-btn px-dl" data-target="pat-chart" data-name="phase0_patterns_by_group">Download PNG</button></div>
+      </div>
+      <div class="px-chart" id="pat-chart" style="min-height:14rem"></div>
+    </section>
+    <section class="px-card" id="tech-diy">
+      <div><h2>What people built themselves</h2><div class="note">Software, smart-home setups and physical aids people made, not bought.</div></div>
+      <div class="px-tablebox" style="max-height:32rem">
+        <table class="px-table"><thead><tr><th>Item</th><th>Group</th><th>Kind</th><th>What they made or did</th></tr></thead><tbody id="diy-body"></tbody></table>
+      </div>
+    </section>
+  </section>
+
+  <section class="px-card" id="data">
+    <h2>Download the data</h2>
+    <div class="note">The full coded dataset behind every chart, as CSV. Each chart above also has its own PNG download.</div>
+    <div class="dl-row">
+      <a class="px-btn" href="data/phase0_items.csv" download>Coded items (CSV)</a>
+      <a class="px-btn" href="data/phase0_tools.csv" download>Tools mentioned (CSV)</a>
+      <a class="px-btn" href="data/phase0_sources.csv" download>Sources and threads (CSV)</a>
+      <a class="px-btn" href="data/community_groups.csv" download>Community → group (CSV)</a>
+    </div>
+  </section>
+
+  <section class="px-card" id="about">
+    <h2 style="margin-bottom:var(--cds-gap-md)">About the data</h2>
+    <div class="about">
+      <div><h3>What this is</h3><p>Phase 0 of a study on how neurodivergent adults adapt tools to lower the effort of everyday tasks. Before interviews, public Reddit posts and comments where people describe their own workarounds were read and coded.</p></div>
+      <div><h3>How it was coded</h3><ul><li>Each post or comment is a <b>source</b>; each friction or strategy in it is an <b>item</b>.</li><li>Items carry a topic, subtopic, strategy code, where the poster places the cause, and the tools named.</li><li>A <b>thread</b> is a post plus its comments; "big threads" have 15+ items.</li></ul></div>
+      <div><h3>Privacy</h3><ul><li>Every item is a paraphrase, not a quote.</li><li>No usernames, links or original text are published.</li><li>Health, medication, family and other personal details were left out when coding.</li></ul></div>
+      <div><h3>Read with care</h3><ul><li>Groups differ in size; compare shares within a group, not raw counts.</li><li>Small groups (dyspraxia, dyscalculia) and dyslexia, which rests on two threads, are leads, not findings.</li><li>Pattern, tech type and "built it themselves" are a provisional first-pass coding.</li></ul></div>
+    </div>
+  </section>
+</main>
+
+  <footer class="site-foot">
+    <span>Yihui Xiong · Tufts University</span>
+    <span id="snapshot"></span>
+  </footer>
+</div>
+<script src="assets/d3.min.js"></script>
+<script src="data.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
