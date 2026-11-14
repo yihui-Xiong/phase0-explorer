@@ -552,13 +552,13 @@
         if (k === 1 && GCOL[(v || '').toLowerCase()]) { td.style.color = GCOL[v.toLowerCase()]; td.style.fontWeight = 600; } tr.appendChild(td); }); body.appendChild(tr); });
   }
 
-  const communityFilter = document.getElementById('community-filter');
+  const groupButtons = document.querySelectorAll('#groups [data-group]');
   const threadFilter = document.getElementById('hide-big-threads');
   const sectionLinks = document.getElementById('section-links');
 
   function redraw() {
     const showCommunity = tab !== 'compare' && tab !== 'tech';
-    communityFilter.value = group;
+    groupButtons.forEach(button => button.setAttribute('aria-pressed', String(button.dataset.group === group)));
     threadFilter.checked = hideBig;
     document.getElementById('groups').hidden = !showCommunity;
     document.querySelectorAll('[id^=comms-]').forEach(el => { el.hidden = !showCommunity || el.id !== 'comms-' + group; });
@@ -639,7 +639,7 @@
 
   threadFilter.addEventListener('change', () => { hideBig = threadFilter.checked; memo = null; selCode = selLoc = selHold = selCell = selectedSubtopic = null; redraw(); });
   document.querySelectorAll('[data-by]').forEach(b => b.addEventListener('click', () => { chkBy = b.dataset.by; selHold = null; redraw(); }));
-  communityFilter.addEventListener('change', () => { group = communityFilter.value; selCode = selLoc = selHold = selCell = selectedSubtopic = null; redraw(); });
+  groupButtons.forEach(button => button.addEventListener('click', () => { group = button.dataset.group; selCode = selLoc = selHold = selCell = selectedSubtopic = null; redraw(); }));
   document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => { if (zoomed) setZoom(null); tab = b.dataset.tab; history.replaceState(null, '', '#' + tab); redraw(); }));
   let qt; document.getElementById('items-search').addEventListener('input', e => { clearTimeout(qt); qt = setTimeout(() => { query = e.target.value; drawTable(D('items_g')); }, 150); });
   document.getElementById('items-csv').addEventListener('click', () => saveCsv(tableRows(D('items_g')), ['Item ID', 'Source ID', 'Group', 'Community', 'Thread', 'Row type', 'Topic', 'Subtopic', 'Paraphrase', 'Primary code', 'Secondary code(s)', 'Friction trigger', 'Why it works (paraphrased)', 'Tools named', 'Friction located in', 'Pattern', 'Tech type', 'Built it themselves'], 'phase0_items_' + group + (hideBig ? '_nobig' : '')));

@@ -10,7 +10,7 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='7' fill='%233E6A8A'/><rect x='6' y='6' width='12' height='12' rx='2' fill='%23C77D2E'/><rect x='20' y='6' width='6' height='12' rx='2' fill='%231F8A8A'/><rect x='6' y='20' width='20' height='6' rx='2' fill='%23C2456E'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/site.css?v=editorial">
+<link rel="stylesheet" href="assets/site.css?v=group-buttons">
 </head>
 <body>
 <div class="site">
@@ -36,17 +36,15 @@
   </div>
   <div class="px-content">
   <div class="px-filter-strip">
-    <label id="groups">Community
-      <select id="community-filter">
-        <option value="all">All communities</option>
-        <option value="adhd">ADHD</option>
-        <option value="autism">Autism</option>
-        <option value="audhd">AuDHD</option>
-        <option value="dyslexia">Dyslexia</option>
-        <option value="dyspraxia">Dyspraxia</option>
-        <option value="dyscalculia">Dyscalculia</option>
-      </select>
-    </label>
+    <div class="px-seg" id="groups" role="group" aria-label="Group">
+      <button type="button" data-group="all" aria-pressed="true">All</button>
+      <button type="button" data-group="adhd" aria-pressed="false"><i style="background:#C77D2E"></i>ADHD</button>
+      <button type="button" data-group="autism" aria-pressed="false"><i style="background:#1F8A8A"></i>Autism</button>
+      <button type="button" data-group="audhd" aria-pressed="false"><i style="background:#7A5BA8"></i>AuDHD</button>
+      <button type="button" data-group="dyslexia" aria-pressed="false"><i style="background:#C2456E"></i>Dyslexia</button>
+      <button type="button" data-group="dyspraxia" aria-pressed="false"><i style="background:#3F6FA0"></i>Dyspraxia</button>
+      <button type="button" data-group="dyscalculia" aria-pressed="false"><i style="background:#4E9A5B"></i>Dyscalculia</button>
+    </div>
     <label><input id="hide-big-threads" type="checkbox"> Hide big threads</label>
   </div>
   <div class="px-filter-notes">
@@ -257,6 +255,6 @@
 </div>
 <script src="assets/d3.min.js"></script>
 <script src="data.js"></script>
-<script src="assets/app.js?v=sidebar-layout"></script>
+<script src="assets/app.js?v=group-buttons"></script>
 </body>
 </html>
