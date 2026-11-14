@@ -28,7 +28,7 @@
     });
   } });
   calc('topic_tree', { inputs: ['items_g'], fn: (items_g) => GROUPS7.flatMap(([grp, g]) =>
-    d3.rollups(items_g.filter(d => d['Topic'] && (!g || d.Group === g)), v => v.length, d => d['Topic'], d => d['Subtopic'] || 'Other')
+    d3.rollups(items_g.filter(d => d['Topic'] && (!g || d.Group === g)), v => v.length, d => d['Topic'], subtopicOf)
       .flatMap(([topic, subs]) => subs.map(([subtopic, n]) => ({ grp, topic, subtopic, n })))) });
   calc('code_counts', { inputs: ['items_g'], fn: (items_g) => GROUPS7.flatMap(([grp, g]) =>
     d3.rollups(items_g.filter(d => d['Row type'] === 'Strategy' && d['Primary code'] && (!g || d.Group === g)), v => v.length, d => d['Primary code'])
@@ -122,7 +122,7 @@
     return { fs: 1.5, lines: wrapAll(text, Math.max(w, 1), 1.5, wt, true), lh: 1.5 * lhf }; };
   const svgOf = box => d3.select(box).append('svg').attr('width', '100%').attr('font-family', 'Inter, sans-serif');
 
-  function panels(box, groups) {
+  function panels(box, groups, selectable = false) {
     box.innerHTML = ''; if (!groups.length) return;
     const W = box.clientWidth || 900, gap = 14, cols = Math.max(1, Math.floor((W + gap) / 250));
     const pw = (W - gap * (cols - 1)) / cols, padB = 10;
@@ -143,10 +143,16 @@
       p.append('text').attr('x', pw - 10).attr('y', 20).attr('text-anchor', 'end').attr('font-size', 14).attr('font-weight', 700).attr('fill', g.color).style('font-variant-numeric', 'tabular-nums').text(fmt(g.total));
       let ry = g._head;
       g.items.forEach(d => {
-        const lt = p.append('text').attr('font-size', 12).attr('fill', 'currentColor'), bo = (d._ll.length - 1) * 15;
+        const row = p.append('g');
+        if (selectable) {
+          row.append('rect').attr('class', 'px-subtopic-target').attr('x', 8).attr('y', ry - 2)
+            .attr('width', pw - 16).attr('height', d._h).attr('rx', 4).attr('fill', 'transparent');
+          bindSubtopic(row, g.name, d.label, d.n);
+        }
+        const lt = row.append('text').attr('font-size', 12).attr('fill', 'currentColor'), bo = (d._ll.length - 1) * 15;
         d._ll.forEach((l, i) => lt.append('tspan').attr('x', 14).attr('y', ry + 12 + i * 15).text(l));
-        p.append('text').attr('x', pw - 10).attr('y', ry + 12).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', 'currentColor').style('font-variant-numeric', 'tabular-nums').text(fmt(d.n));
-        p.append('rect').attr('x', 14).attr('y', ry + 16 + bo).attr('height', 5).attr('rx', 2.5).attr('width', Math.max(3, (pw - 28) * d.n / max)).attr('fill', g.color);
+        row.append('text').attr('x', pw - 10).attr('y', ry + 12).attr('text-anchor', 'end').attr('font-size', 12).attr('fill', 'currentColor').style('font-variant-numeric', 'tabular-nums').text(fmt(d.n));
+        row.append('rect').attr('x', 14).attr('y', ry + 16 + bo).attr('height', 5).attr('rx', 2.5).attr('width', Math.max(3, (pw - 28) * d.n / max)).attr('fill', g.color);
         ry += d._h;
       });
     });
@@ -159,6 +165,37 @@
     const tot = d3.rollup(rows, v => d3.sum(v, d => d.n), d => d.topic);
     return [...tot.keys()].sort((a, b) => tot.get(b) - tot.get(a)).map(t => ({ name: t, total: tot.get(t), color: color(t),
       items: rows.filter(d => d.topic === t).map(d => ({ label: d.subtopic, n: d.n })).sort((a, b) => b.n - a.n || a.label.localeCompare(b.label)) }));
+  }
+
+  let selectedSubtopic = null;
+  function subtopicOf(item) { return item.Subtopic || 'Other'; }
+  function bindSubtopic(control, topic, subtopic, count) {
+    const activate = () => {
+      selectedSubtopic = { topic, subtopic };
+      if (zoomed) setZoom(null);
+      else showSubtopicItems(D('items_g'));
+      const results = document.getElementById('topics-detail');
+      results.focus({ preventScroll: true });
+      results.scrollIntoView({ block: 'start' });
+    };
+    control.attr('class', 'px-subtopic').attr('role', 'button').attr('tabindex', 0)
+      .attr('aria-controls', 'topics-detail').attr('data-topic', topic).attr('data-subtopic', subtopic)
+      .attr('aria-label', `View ${fmt(count)} ${count === 1 ? 'item' : 'items'} for ${topic} › ${subtopic}`)
+      .on('click', activate).on('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate(); }
+      });
+  }
+
+  function showSubtopicItems(items) {
+    const selection = selectedSubtopic;
+    document.querySelectorAll('.px-subtopic').forEach(control => {
+      const selected = selection?.topic === control.dataset.topic && selection.subtopic === control.dataset.subtopic;
+      control.classList.toggle('px-subtopic-selected', selected);
+    });
+    detail('topics-detail', items, selection && `${selection.topic} › ${selection.subtopic}`,
+      item => item.Topic === selection.topic && subtopicOf(item) === selection.subtopic, label => label,
+      [['Item ID', 'Item'], ['Row type', 'Type'], ['Paraphrase', 'Paraphrase']]);
+    if (!selection) document.getElementById('topics-detail').firstChild.textContent = 'Select a subtopic in the map or list to see its items.';
   }
 
   function drawTopicMap(st, color) {
@@ -177,7 +214,8 @@
     const tip = tipFor(box);
     root.leaves().forEach(d => {
       const w = d.x1 - d.x0, h = d.y1 - d.y0, g = svg.append('g');
-      g.append('rect').attr('x', d.x0).attr('y', d.y0).attr('width', w).attr('height', h).attr('rx', 4).attr('fill', d.data.color);
+      g.append('rect').attr('class', 'px-subtopic-target').attr('x', d.x0).attr('y', d.y0).attr('width', w).attr('height', h).attr('rx', 4).attr('fill', d.data.color);
+      bindSubtopic(g, d.parent.data.name, d.data.name, d.value);
       const cnt = `${fmt(d.value)} item${d.value === 1 ? '' : 's'}`, pad = Math.min(6, w * 0.08, h * 0.08);
       const f = fitBox(d.data.name, w - 2 * pad, h - 2 * pad, 600, 20, cnt), tg = g.append('g').attr('transform', `translate(${d.x0 + pad},${d.y0 + pad})`);
       const tx = tg.append('text').attr('font-size', f.fs).attr('font-weight', 600).attr('fill', '#fff');
@@ -541,7 +579,8 @@
 
     if (tab === 'explore') {
       const items = D('items_g'), tt = D('topic_tree'), tk = D('tools_by_kind'), color = topicColors();
-      drawTopicMap(tt, color); panels(document.getElementById('topics-list'), topicGroups(mine(tt), color));
+      drawTopicMap(tt, color); panels(document.getElementById('topics-list'), topicGroups(mine(tt), color), true);
+      showSubtopicItems(items);
       drawToolMap(tk); drawToolList(tk);
       hbars(document.getElementById('codes-chart'), mine(D('code_counts')), d => d.code, d => d.kind === 'Tool' ? '#3E6A8A' : '#9A9A9A', selCode, k => { selCode = selCode === k ? null : k; redraw(); });
       detail('codes-detail', items, selCode, d => d['Row type'] === 'Strategy' && d['Primary code'] === selCode, k => k,
@@ -582,9 +621,9 @@
     e.addEventListener('click', () => setZoom(b.dataset.target)); b.parentNode.insertBefore(e, b);
     b.addEventListener('click', () => toPng(document.getElementById(b.dataset.target), b.dataset.name)); });
 
-  document.querySelectorAll('[data-big]').forEach(b => b.addEventListener('click', () => { hideBig = b.dataset.big === 'hide'; memo = null; selCode = selLoc = selHold = selCell = null; redraw(); }));
+  document.querySelectorAll('[data-big]').forEach(b => b.addEventListener('click', () => { hideBig = b.dataset.big === 'hide'; memo = null; selCode = selLoc = selHold = selCell = selectedSubtopic = null; redraw(); }));
   document.querySelectorAll('[data-by]').forEach(b => b.addEventListener('click', () => { chkBy = b.dataset.by; selHold = null; redraw(); }));
-  document.querySelectorAll('[data-group]').forEach(b => b.addEventListener('click', () => { group = b.dataset.group; selCode = selLoc = selHold = selCell = null; redraw(); }));
+  document.querySelectorAll('[data-group]').forEach(b => b.addEventListener('click', () => { group = b.dataset.group; selCode = selLoc = selHold = selCell = selectedSubtopic = null; redraw(); }));
   document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => { if (zoomed) setZoom(null); tab = b.dataset.tab; history.replaceState(null, '', '#' + tab); redraw(); }));
   let qt; document.getElementById('items-search').addEventListener('input', e => { clearTimeout(qt); qt = setTimeout(() => { query = e.target.value; drawTable(D('items_g')); }, 150); });
   document.getElementById('items-csv').addEventListener('click', () => saveCsv(tableRows(D('items_g')), ['Item ID', 'Source ID', 'Group', 'Community', 'Thread', 'Row type', 'Topic', 'Subtopic', 'Paraphrase', 'Primary code', 'Secondary code(s)', 'Friction trigger', 'Why it works (paraphrased)', 'Tools named', 'Friction located in', 'Pattern', 'Tech type', 'Built it themselves'], 'phase0_items_' + group + (hideBig ? '_nobig' : '')));

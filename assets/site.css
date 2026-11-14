@@ -60,6 +60,9 @@ a{color:inherit}
 .px-btn[hidden]{display:none}
 .px-stack{display:flex;flex-direction:column;gap:var(--cds-gap-lg)}
 .px-chart{position:relative;min-height:16rem}
+.px-subtopic{cursor:pointer}
+.px-subtopic:is(:hover,:focus-visible,.px-subtopic-selected)>.px-subtopic-target{stroke:currentColor;stroke-width:2px;vector-effect:non-scaling-stroke}
+#topics-detail{scroll-margin-top:4rem}
 .px-zoomed{position:fixed!important;inset:0;z-index:1000;background:var(--color-bg);overflow:auto;padding:56px 16px 16px!important;margin:0!important;min-height:0!important}
 .px-zoomed svg{width:calc(var(--z,1)*100%)!important;max-width:none;height:auto}
 .px-zbar{position:fixed;top:10px;right:16px;z-index:1001;display:flex;gap:6px;align-items:center;background:var(--color-panel);border:1px solid var(--color-border-line);border-radius:var(--cds-radius);padding:4px 6px;font-size:var(--cds-font-size-caption)}
